@@ -1,5 +1,6 @@
 const container = document.querySelector("#game-field");
 const fieldSize = 3;
+
 let lastPlayed = "o";
 renderGameField();
 
@@ -11,8 +12,9 @@ for (let i = 0; i < fieldSize; i++) {
 
 // Render Game Field Grid
 function renderGameField() {
-    container.style.gridTemplateColumns = `repeat(${fieldSize}, 50px)`;
-    container.style.gridTemplateRows = `repeat(${fieldSize}, 50px)`;
+    container.innerText = "";
+    container.style.gridTemplateColumns = `repeat(${fieldSize}, 1fr)`;
+    container.style.gridTemplateRows = `repeat(${fieldSize}, 1fr)`;
     for (let i = 0; i < fieldSize; i++) {
         for (let j = 0; j < fieldSize; j++) {
             const cell = document.createElement("div");
@@ -50,8 +52,13 @@ function checkWin() {
     const columns = Array(fieldSize).fill("");
     const diagonals = Array(2).fill("");
     for (let i = 0; i < fieldSize; i++) {
+        const horizontal = fieldArray[i].join("");
         // Horizontal
-        if (fieldArray[i].join("") === "xxx" || fieldArray[i] === "ooo") {
+        if (
+            horizontal.length === fieldSize &&
+            (horizontal.replaceAll("x", "").length === 0 ||
+                horizontal.replaceAll("o", "").length === 0)
+        ) {
             const winningCells = document.querySelectorAll(`[data-i="${i}"]`);
             winningCells.forEach((cell) => (cell.style.backgroundColor = "darkgreen"));
             stopHandler();
@@ -60,8 +67,13 @@ function checkWin() {
         // Vertical
         for (let j = 0; j < fieldSize; j++) {
             columns[j] += fieldArray[i][j] || "";
+            const vertical = columns[j];
 
-            if (columns[j] === "xxx" || columns[j] === "ooo") {
+            if (
+                vertical.length === fieldSize &&
+                (vertical.replaceAll("x", "").length === 0 ||
+                    vertical.replaceAll("o", "").length === 0)
+            ) {
                 const winningCells = document.querySelectorAll(`[data-j="${j}"]`);
                 winningCells.forEach((cell) => (cell.style.backgroundColor = "darkgreen"));
                 stopHandler();
@@ -76,8 +88,13 @@ function checkWin() {
             const cell = document.querySelector(`[data-i="${i}"][data-j="${i}"]`);
             cell.setAttribute("data-d0", "");
             diagonals[0] += fieldArray[i][i];
+            const diagonal = diagonals[0];
 
-            if (diagonals[0] === "xxx" || diagonals[0] === "ooo") {
+            if (
+                diagonal.length === fieldSize &&
+                (diagonal.replaceAll("x", "").length === 0 ||
+                    diagonal.replaceAll("o", "").length === 0)
+            ) {
                 const cells = document.querySelectorAll("[data-d0]");
                 cells.forEach((cell) => (cell.style.backgroundColor = "darkgreen"));
                 stopHandler();
@@ -89,8 +106,13 @@ function checkWin() {
             const cell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`);
             cell.setAttribute("data-d1", "");
             diagonals[1] += fieldArray[i][j];
+            const diagonal = diagonals[1];
 
-            if (diagonals[1] === "xxx" || diagonals[1] === "ooo") {
+            if (
+                diagonal.length === fieldSize &&
+                (diagonal.replaceAll("x", "").length === 0 ||
+                    diagonal.replaceAll("o", "").length === 0)
+            ) {
                 const cells = document.querySelectorAll("[data-d1]");
                 cells.forEach((cell) => (cell.style.backgroundColor = "darkgreen"));
                 stopHandler();
