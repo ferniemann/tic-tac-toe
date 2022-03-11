@@ -1,13 +1,40 @@
 const container = document.querySelector("#game-field");
-const fieldSize = 3;
+const chooseFieldSize = document.querySelector("#choice");
+const btnsFieldSize = document.querySelectorAll("[data-size]");
+const modal = document.querySelector("#modal");
+const winner = document.querySelector("#winner");
+const btnReload = document.querySelector("#reload");
+const fieldSize = Number(localStorage.getItem("size")) || 3;
 
 let lastPlayed = "o";
 renderGameField();
 
+chooseFieldSize.addEventListener("click", selectedFieldSize);
+
+btnReload.addEventListener("click", function () {
+    window.location.reload();
+});
+
+btnsFieldSize.forEach((field) => {
+    if (field.dataset.size === String(fieldSize)) {
+        field.style.borderColor = "var(--clr-accent)";
+    }
+});
+
+function selectedFieldSize(e) {
+    const choice = e.target;
+
+    if (choice.hasAttribute("data-size")) {
+        const chosenSize = choice.dataset.size;
+        localStorage.setItem("size", chosenSize);
+        window.location.reload();
+    }
+}
+
 // Create 2D Array
 const fieldArray = new Array(fieldSize);
 for (let i = 0; i < fieldSize; i++) {
-    fieldArray[i] = new Array(fieldSize);
+    fieldArray[i] = Array(fieldSize).fill("");
 }
 
 // Render Game Field Grid
@@ -20,14 +47,14 @@ function renderGameField() {
             const cell = document.createElement("div");
             cell.dataset.i = i;
             cell.dataset.j = j;
-            cell.addEventListener("click", handleClick);
+            cell.addEventListener("click", handleCellClick);
             container.append(cell);
         }
     }
 }
 
 // Handle Cell Clicks
-function handleClick(e) {
+function handleCellClick(e) {
     const cell = e.target;
     const i = cell.dataset.i;
     const j = cell.dataset.j;
@@ -60,7 +87,9 @@ function checkWin() {
                 horizontal.replaceAll("o", "").length === 0)
         ) {
             const winningCells = document.querySelectorAll(`[data-i="${i}"]`);
-            winningCells.forEach((cell) => (cell.style.backgroundColor = "darkgreen"));
+            winningCells.forEach((cell) => (cell.style.backgroundColor = "var(--clr-accent)"));
+            winner.textContent = lastPlayed;
+            modal.classList.add("active");
             stopHandler();
         }
 
@@ -75,7 +104,10 @@ function checkWin() {
                     vertical.replaceAll("o", "").length === 0)
             ) {
                 const winningCells = document.querySelectorAll(`[data-j="${j}"]`);
-                winningCells.forEach((cell) => (cell.style.backgroundColor = "darkgreen"));
+                winningCells.forEach((cell) => (cell.style.backgroundColor = "var(--clr-accent)"));
+                winner.textContent = lastPlayed;
+                modal.classList.add("active");
+
                 stopHandler();
             }
         }
@@ -96,7 +128,10 @@ function checkWin() {
                     diagonal.replaceAll("o", "").length === 0)
             ) {
                 const cells = document.querySelectorAll("[data-d0]");
-                cells.forEach((cell) => (cell.style.backgroundColor = "darkgreen"));
+                cells.forEach((cell) => (cell.style.backgroundColor = "var(--clr-accent)"));
+                winner.textContent = lastPlayed;
+                modal.classList.add("active");
+
                 stopHandler();
             }
         }
@@ -114,7 +149,10 @@ function checkWin() {
                     diagonal.replaceAll("o", "").length === 0)
             ) {
                 const cells = document.querySelectorAll("[data-d1]");
-                cells.forEach((cell) => (cell.style.backgroundColor = "darkgreen"));
+                cells.forEach((cell) => (cell.style.backgroundColor = "var(--clr-accent)"));
+                winner.textContent = lastPlayed;
+                modal.classList.add("active");
+
                 stopHandler();
             }
         }
@@ -125,5 +163,5 @@ function checkWin() {
 function stopHandler() {
     const cells = document.querySelectorAll("[data-i]");
 
-    cells.forEach((cell) => cell.removeEventListener("click", handleClick));
+    cells.forEach((cell) => cell.removeEventListener("click", handleCellClick));
 }
